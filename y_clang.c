@@ -10,13 +10,13 @@ typedef struct wrap {
 
 typedef void (^callback)( func ) ;
 
+
 void show( uintmax_t value ) {
    printf( "%ju" "\n" , value ) ;
 }
 
 
 int main( int argc , char *argv[] ) {
-
 
    void (^y)(wrap, callback) = ^ void ( wrap gen , callback cb ) {
          gen._(
@@ -26,7 +26,6 @@ int main( int argc , char *argv[] ) {
                }
          );
    };
-
 
    void (^factorial_improver)(wrap, callback) = ^ void ( wrap partial , callback cb ) {
          cb( ^ uintmax_t ( uintmax_t n ) {
@@ -41,21 +40,20 @@ int main( int argc , char *argv[] ) {
                                           rv;
                                        }) ;
          } );
-    };
+   };
 
-    __block func factorial;
+   callback fifty = ^ ( func fx ) {
+      show( fx ( 50 ) ) ;
+   };
 
-    y(   (wrap) { ._ = ^ (  wrap partial , callback cb ) 
+   y(   (wrap) { ._ = ^ (  wrap partial , callback cb ) 
                {
                   factorial_improver( partial , cb );
                } 
          }   
-       , ^ (func fx) {
-               factorial = fx;
-         }
-    );
+       , fifty
+   );
 
-    show( factorial( 50 ) );
 
-    return EXIT_SUCCESS;
+   return EXIT_SUCCESS;
 }
